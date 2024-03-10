@@ -5,8 +5,8 @@ class SecondaryFrame(tk.Frame):
         super().__init__(master)
         self.action = action
 
-        # Configurar coluna para espaçamento homogêneo vertical
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1, minsize=60)
+        self.columnconfigure(1,weight=2, minsize=200)
 
         button_actions = [
             ("Busca 1", lambda: master.show_query(1),'''Apresenta o nome da região do brasil que apresenta maior número de funcionários e o nº de funcionários'''),
@@ -17,10 +17,12 @@ class SecondaryFrame(tk.Frame):
         ]
 
         for i, (action, action_command, description) in enumerate(button_actions):
-            # if action == self.action:
-                button = tk.Button(self, text=action, command=action_command)
-                button.grid(row=i, column=0, padx=50, pady=5, sticky="nsew")  
-                self.grid_columnconfigure(0, weight=1)  
+            button = tk.Button(self, text=action, command=action_command, height=2)
+            button.grid(row=i, column=0, padx=60, pady=10, sticky="nsew")  
+            # self.grid_columnconfigure(0, weight=1)  
 
-                label = tk.Label(self, text=description, wraplength=200, justify="left")
-                label.grid(row=i, column=1, padx=5, pady=5, sticky="w")
+            label = tk.Label(self, text=description, wraplength=200, justify="left")
+            label.grid(row=i, column=1, padx=1, pady=5, sticky="w")
+        
+        back_button = tk.Button(self, text="Voltar", command=master.show_main_frame)
+        back_button.grid(row=0, column=0, padx=10, pady=10, sticky="nw")

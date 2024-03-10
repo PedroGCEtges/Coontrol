@@ -12,13 +12,13 @@ class MainFrame(tk.Frame):
         label.pack(expand=True)
 
         button = tk.Button(self, text="Ir para querys", command=lambda: master.show_secondary_frame("Busca"))
-        button.pack(side="bottom", padx=5, pady=5)
+        button.pack(side="right", padx=5, pady=5)
 
         import_button = tk.Button(self, text="Importar CSV", command=self.import_csv)
         import_button.pack(side="left", padx=5, pady=5)
 
-        export_button = tk.Button(self, text="Exportar CSV", command=master.export_csv)
-        export_button.pack(side="right", padx=5, pady=5)
+        # export_button = tk.Button(self, text="Exportar CSV", command=master.export_csv)
+        # export_button.pack(side="right", padx=5, pady=5)
 
     def import_csv(self):
         arquivo_csv = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])

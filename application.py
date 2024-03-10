@@ -2,6 +2,7 @@ import sqlite3
 import tkinter as tk
 import csv
 import re
+from tkinter.messagebox import showinfo
 from database.db_funtions import check_if_table_exists
 from views.main_frame import MainFrame
 from views.second_frame import SecondaryFrame
@@ -12,7 +13,7 @@ from tkinter import filedialog, ttk
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Minha Aplicação")
+        self.title("CoontrolTest")
         self.geometry("400x300")
         self.current_frame = None
 
@@ -37,59 +38,46 @@ class Application(tk.Tk):
     
     def show_query(self, action):
         self.show_results(action)
-    
-    def import_csv(self):
-        filename = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
-        if filename:
-            with open(filename, 'r') as file:
-                reader = csv.reader(file)
-                for row in reader:
-                    self.cursor.execute("INSERT INTO empresas (nome, data_fundacao, num_funcionarios, regiao_brasil, setor_atuacao ) VALUES (?, ?, ?, ?, ?)", row)
-                self.database_connection.commit()
 
-    def import_csv_insert(self, arquivo_csv):
-        with open(arquivo_csv, 'r', newline='', encoding='latin-1') as arquivo:
-            leitor_csv = csv.reader(arquivo)
-            contador_linhas = 0
+    def import_csv_insert(self, csv_file):
+        with open(csv_file, 'r', newline='', encoding='latin-1') as archive:
+            csv_reader = csv.reader(archive)
+            line_counter = 0
             self.cursor.execute("DROP TABLE IF EXISTS empresas_importado")
             self.cursor.execute('''CREATE TABLE IF NOT EXISTS empresas_importada
              (nome TEXT, data_fundacao TEXT, num_funcionarios INTEGER, regiao_brasil TEXT, setor_atuacao TEXT)''')
-            for linha in leitor_csv:
-                self.cursor.execute("INSERT INTO empresas_importada (nome, data_fundacao, num_funcionarios, regiao_brasil, setor_atuacao ) VALUES (?, ?, ?, ?, ?)", linha)
-                contador_linhas += 1
-                if contador_linhas >= 10:
+            for line in csv_reader:
+                self.cursor.execute("INSERT INTO empresas_importada (nome, data_fundacao, num_funcionarios, regiao_brasil, setor_atuacao ) VALUES (?, ?, ?, ?, ?)", line)
+                line_counter += 1
+                if line_counter >= 10:
                     break
         self.database_connection.commit()
 
-        self.mostrar_dados_importados()
+        self.show_imported_data_header()
     
-    def mostrar_dados_importados(self):
-        # Buscar as 10 primeiras linhas dos dados importados
+    def show_imported_data_header(self):
         self.cursor.execute("SELECT * FROM empresas_importada LIMIT 10")
-        dados_importados = self.cursor.fetchall()
+        imported_data = self.cursor.fetchall()
 
-        # Criar uma nova janela
-        nova_janela = tk.Toplevel(self)
-        nova_janela.title("Dados Importados")
+        new_window = tk.Toplevel(self)
+        new_window.title("Dados Importados")
         
-        # Exibir uma mensagem de confirmação
-        mensagem = tk.Label(nova_janela, text="Dados importados com sucesso!")
-        mensagem.pack()
+        message = tk.Label(new_window, text="Dados importados com sucesso!")
+        message.pack()
 
-        # Criar uma tabela para exibir os dados importados
-        tabela = ttk.Treeview(nova_janela, columns=("Nome", 
+        table = ttk.Treeview(new_window, columns=("Nome", 
                                                     "Data de Fundação",
                                                     "Número de Funcionários", 
                                                     "Região do Brasil", 
                                                     "Setor"), show="headings")
-        tabela.heading("Nome", text="Nome")
-        tabela.heading("Data de Fundação", text="Data de Fundação")
-        tabela.heading("Número de Funcionários", text="Número de Funcionários")
-        tabela.heading("Região do Brasil", text="Região do Brasil")
-        tabela.heading("Setor", text="Setor")
-        for linha in dados_importados:
-            tabela.insert("", "end", values=linha)
-        tabela.pack(expand=True, fill="both")
+        table.heading("Nome", text="Nome")
+        table.heading("Data de Fundação", text="Data de Fundação")
+        table.heading("Número de Funcionários", text="Número de Funcionários")
+        table.heading("Região do Brasil", text="Região do Brasil")
+        table.heading("Setor", text="Setor")
+        for line in imported_data:
+            table.insert("", "end", values=line)
+        table.pack(expand=True, fill="both")
 
     def export_csv(self):
         filename = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
@@ -102,7 +90,6 @@ class Application(tk.Tk):
     def show_results(self, action):
         if check_if_table_exists("empresas_importada"):
             queries = querys.set_table_to_query_at(table="empresas_importada")
-            # print("ola"+queries)
         else:
             queries = querys.set_table_to_query_at()
 
@@ -120,14 +107,14 @@ class Application(tk.Tk):
 
         result = self.cursor.fetchall()
 
-        nova_janela = tk.Toplevel(self)
-        nova_janela.minsize(300,50)
-        nova_janela.title("Resultado")
+        # new_window = tk.Toplevel(self)
+        # new_window.minsize(300,50)
+        # new_window.title("Resultado")
         
-        mensagem = tk.Label(nova_janela, text=self.formatar_resultado(result, action))
-        mensagem.pack()
+        message = showinfo("Resultado", self.format_result(result, action))
+        # message.pack()
 
-    def formatar_resultado(self, result, action):
+    def format_result(self, result, action):
         if action == 1:
             1
         formatted_result = ""
