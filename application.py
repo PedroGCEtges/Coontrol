@@ -6,7 +6,6 @@ from tkinter.messagebox import showinfo
 from database.db_funtions import check_if_table_exists
 from views.main_frame import MainFrame
 from views.second_frame import SecondaryFrame
-from views.first_query import FirstQuery
 from utils import querys
 from tkinter import filedialog, ttk
 
@@ -106,13 +105,8 @@ class Application(tk.Tk):
             print("Erro")
 
         result = self.cursor.fetchall()
-
-        # new_window = tk.Toplevel(self)
-        # new_window.minsize(300,50)
-        # new_window.title("Resultado")
-        
+       
         message = showinfo("Resultado", self.format_result(result, action))
-        # message.pack()
 
     def format_result(self, result, action):
         if action == 1:
