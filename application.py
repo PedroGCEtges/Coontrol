@@ -42,11 +42,19 @@ class Application(tk.Tk):
         with open(csv_file, 'r', newline='', encoding='latin-1') as archive:
             csv_reader = csv.reader(archive)
             line_counter = 0
+
             self.cursor.execute("DROP TABLE IF EXISTS empresas_importado")
             self.cursor.execute('''CREATE TABLE IF NOT EXISTS empresas_importada
-             (nome TEXT, data_fundacao TEXT, num_funcionarios INTEGER, regiao_brasil TEXT, setor_atuacao TEXT)''')
+            (nome TEXT, data_fundacao TEXT, num_funcionarios INTEGER, regiao_brasil TEXT, setor_atuacao TEXT)''')
+
             for line in csv_reader:
-                self.cursor.execute("INSERT INTO empresas_importada (nome, data_fundacao, num_funcionarios, regiao_brasil, setor_atuacao ) VALUES (?, ?, ?, ?, ?)", line)
+                if len(line)==1:
+                    fields = line[0].split(";")
+                    print("Teste 1" + fields[0])
+                else:
+                    fields = line
+
+                self.cursor.execute("INSERT INTO empresas_importada (nome, data_fundacao, num_funcionarios, regiao_brasil, setor_atuacao ) VALUES (?, ?, ?, ?, ?)", fields)
                 line_counter += 1
                 if line_counter >= 10:
                     break
