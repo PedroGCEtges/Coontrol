@@ -50,7 +50,6 @@ class Application(tk.Tk):
             for line in csv_reader:
                 if len(line)==1:
                     fields = line[0].split(";")
-                    print("Teste 1" + fields[0])
                 else:
                     fields = line
 
